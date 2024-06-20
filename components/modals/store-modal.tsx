@@ -25,9 +25,10 @@ export const StoreModal = () => {
             setLoading(true)
             const response = await axios.post('/api/stores', values)
             toast.success('Berhasil Membuat Toko')
+            window.location.assign(`/${response.data.id}`)
         } catch (error) {
             toast.error('Gagal Coba Lagi')
-        }finally{
+        } finally {
             setLoading(false)
         }
     }
@@ -41,27 +42,25 @@ export const StoreModal = () => {
 
     const storeModal = useModalStore();
     return (
-        <Modal title="Store" description="Store Description" isOpen={storeModal.isOpen} onClose={storeModal.onClose}>
+        <Modal title="Store" description="Deskripsi Toko" isOpen={storeModal.isOpen} onClose={storeModal.onClose}>
             <div>
-                <div>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <FormField control={form.control} name="name" render={({ field }) => (
-                                <FormItem>
-                                    <FormLabel>Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Name Toko" {...field} disabled={loading}/>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-                            )} />
-                            <div className="mt-5 space-x-2 flex justify-end">
-                                <Button variant="outline" onClick={storeModal.onClose} disabled={loading}>Cancel</Button>
-                                <Button type="submit" disabled={loading}>Continue</Button>
-                            </div>
-                        </form>
-                    </Form>
-                </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)}>
+                        <FormField control={form.control} name="name" render={({ field }) => (
+                            <FormItem>
+                                <FormLabel>Nama Toko</FormLabel>
+                                <FormControl>
+                                    <Input placeholder="Nama Toko" {...field} disabled={loading} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )} />
+                        <div className="mt-5 space-x-2 flex justify-end">
+                            <Button variant="outline" onClick={storeModal.onClose} disabled={loading}>Batal</Button>
+                            <Button type="submit" disabled={loading}>Lanjutkan</Button>
+                        </div>
+                    </form>
+                </Form>
             </div>
         </Modal>
     )

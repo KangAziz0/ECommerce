@@ -18,7 +18,7 @@ const SetupPage = () => {
 
   return (
     <nav className="p-4">
-      Root
+      <UserButton afterSignOutUrl="/"/>
     </nav>
   )
 }
