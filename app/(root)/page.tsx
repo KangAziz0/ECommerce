@@ -1,9 +1,25 @@
+"use client"
 import { Button } from "@/components/ui/button"
+import Modal from "@/components/ui/modal"
+import { useModalStore } from "@/hooks/use-store-modal"
+import { UserButton } from "@clerk/nextjs"
+import { useEffect } from "react"
 
-export default function Home() {
+const SetupPage = () => {
+  const onOpen = useModalStore((state) => state.onOpen)
+  const isOpen = useModalStore((state) => state.isOpen)
+
+  useEffect(() => {
+    if (!isOpen) {
+      onOpen()
+    }
+  }, [isOpen,onOpen])
+
+
   return (
-    <div className="p-4">
-      <Button variant="default" size="lg">Hello</Button>
-    </div>
+    <nav className="p-4">
+      Root
+    </nav>
   )
 }
+export default SetupPage
