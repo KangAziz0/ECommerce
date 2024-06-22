@@ -12,9 +12,6 @@ export const ModalProvider = () => {
     if (!isMutated) {
         return null
     }
-    return (
-        <>
-        <StoreModal/>
-        </>
-    ) 
+    return <StoreModal/>
+
 }

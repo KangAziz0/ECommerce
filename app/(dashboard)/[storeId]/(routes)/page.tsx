@@ -11,9 +11,9 @@ const DashboardLayout  = async ({params}:DashboardPageProps) => {
         where:{id: params.storeId}
     })
     return (
-        <div>
+        <>
             Active Store {store?.name}
-        </div>
+        </>
     )
 }
 

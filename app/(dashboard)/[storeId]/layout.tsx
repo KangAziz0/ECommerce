@@ -1,3 +1,4 @@
+import Navbar from "@/components/navbar"
 import db from "@/lib/db"
 import { auth } from "@clerk/nextjs/server"
 import { redirect } from "next/navigation"
@@ -10,7 +11,7 @@ export default async function DashboardLayout({
 }) {
     const { userId } = auth()
     if (!userId) {
-       redirect('/sign-in')
+        redirect('/sign-in')
     }
     const store = await db.store.findFirst({
         where: {
@@ -23,9 +24,7 @@ export default async function DashboardLayout({
     }
     return (
         <>
-            <div>
-                This Is Navbar
-            </div>
+            <Navbar />
             {children}
         </>
     )
