@@ -6,15 +6,15 @@ import { Separator } from "@/components/ui/separator"
 import { banner } from "@prisma/client"
 import { Plus } from "lucide-react"
 import { useParams, useRouter } from "next/navigation"
-import { BannerColumn, columns } from "./column"
+import { CategoryColumn, columns } from "./column"
 import { DataTable } from "@/components/ui/data-table"
 import { ApiList } from "@/components/ui/api-list"
 
-interface BannerClientProps{
-    data: BannerColumn[]
+interface CategoryClientProps{
+    data: CategoryColumn[]
 }
 
-export const BannerClient: React.FC<BannerClientProps> = ({
+export const CategoryClient: React.FC<CategoryClientProps> = ({
     data
 }) => {
     const router = useRouter()
@@ -23,14 +23,14 @@ export const BannerClient: React.FC<BannerClientProps> = ({
     return (
         <>
             <div className="flex items-center justify-between">
-                <Heading title={`Banner (${data.length})`} description="Atur Banner Toko Anda"/>
-                <Button onClick={()=> router.push(`/${params.storeId}/banners/new`)}>
+                <Heading title={`Category (${data.length})`} description="Atur Category Toko Anda"/>
+                <Button onClick={()=> router.push(`/${params.storeId}/categories/new`)}>
                     <Plus className="mr-2 h-4 w-4"/>
                     Add New
                 </Button>
             </div>
             <Separator/>
-            <DataTable data={data} columns={columns} searchKey="label"/>
+            <DataTable data={data} columns={columns} searchKey="name"/>
             <Separator/>
             <ApiList namaIndikator="banners" idIndikator="bannerId"/>
         </>

@@ -23,25 +23,28 @@ const variantMap: Record<ApiAlertProps['variant'], BadgeProps['variant']> = {
 
 export const ApiAlert: React.FC<ApiAlertProps> = ({ title, description, variant = 'public' }) => {
 
-    const onCopy = () =>{
+    const onCopy = () => {
         navigator.clipboard.writeText(description)
         toast.success('API Copied')
     }
     return (
         <Alert>
-            <Server className="h-4 w-4" />
-            <AlertTitle>{title}
-                <Badge variant={variantMap[variant]}>
-                    {textMap[variant]}
-                </Badge>
+            <AlertTitle className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                    <Server className="h-4 w-4" />
+                    {title}
+                    <Badge variant={variantMap[variant]}>
+                        {textMap[variant]}
+                    </Badge>
+                </div>
+                <Button variant="outline" size="sm" onClick={onCopy}>
+                    <Copy className="h-4 w-4" />
+                </Button>
             </AlertTitle>
-            <AlertDescription className="mt-4 flex items-center justify-between">
-                <code className="relative rounded bg-muted px-[0.3rem] py-[0.2rem] font-mone text-sm">
+            <AlertDescription className="mt-4 flex items-center">
+                <code className="flex rounded bg-muted px-[0.3rem] py-[0.2rem] font-mone text-xs lg:text-sm ">
                     {description}
                 </code>
-                <Button variant="outline" size="sm" onClick={onCopy}>
-                    <Copy className="h-4 w-4"/>
-                </Button>
             </AlertDescription>
         </Alert>
     )

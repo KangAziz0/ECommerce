@@ -10,28 +10,74 @@ generator client {
 
 // prisma/schema.prisma
 datasource db {
-  provider  = "postgresql"
-  url  	    = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model store {
-  id        String     @id @default(uuid())
-  name      String
-  userId    String
-  banners   banner[]  @relation("StoreToBanner")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String     @id @default(uuid())
+  name       String
+  userId     String
+  banners    banner[]   @relation("StoreToBanner")
+  product    product[]  @relation("StoreToProduct")
+  categories category[] @relation("StoreToCategory")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
 }
 
 model banner {
-  id        String @id @default(uuid())
+  id         String     @id @default(uuid())
+  storeId    String
+  store      store      @relation("StoreToBanner", fields: [storeId], references: [id])
+  label      String
+  imageUrl   String
+  categories category[] @relation("BannerToCategory")
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  @@index([storeId])
+}
+
+model category {
+  id        String    @id @default(uuid())
   storeId   String
-  store     store @relation("StoreToBanner",fields: [storeId],references: [id])
-  label     String
-  imageUrl  String
+  store     store     @relation("StoreToCategory", fields: [storeId], references: [id])
+  bannerId  String
+  banner    banner    @relation("BannerToCategory", fields: [bannerId], references: [id])
+  product   product[] @relation("CategoryToProduct")
+  name      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([storeId])
+  @@index([bannerId])
+}
+
+model product {
+  id         String   @id @default(uuid())
+  storeId    String
+  store      store    @relation("StoreToProduct", fields: [storeId], references: [id])
+  categoryId String
+  category   category @relation("CategoryToProduct", fields: [categoryId], references: [id])
+  name       String
+  price      Decimal
+  isFeatured Boolean  @default(false)
+  isArchived Boolean  @default(false)
+  images     image[]
+  updatedAt  DateTime @updatedAt
+  createdAt  DateTime @default(now())
+
+  @@index([storeId])
+  @@index([categoryId])
+}
+
+model image {
+  id        String   @id @default(uuid())
+  productId String
+  product   product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  url       String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([storeId])
-  
+  @@index([productId])
 }

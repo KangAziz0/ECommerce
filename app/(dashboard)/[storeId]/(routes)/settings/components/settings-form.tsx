@@ -34,6 +34,7 @@ export const SettingForm: React.FC<SettingFormProps> = ({ initialData }) => {
     
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
+    const descriptionOfDelete = 'Apakah Anda Yakin Ingin Menghapus Toko Ini !!!'
 
     const form = useForm({
         resolver: zodResolver(formSchema),
@@ -71,7 +72,7 @@ export const SettingForm: React.FC<SettingFormProps> = ({ initialData }) => {
 
     return (
         <>
-            <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={onDelete} loading={loading} />
+            <AlertModal isOpen={open} onClose={() => setOpen(false)} onConfirm={onDelete} loading={loading} description={descriptionOfDelete}/>
             <div className="flex items-center justify-between">
                 <Heading title="Toko" description="Atur Toko Anda" />
                 <Button variant="destructive" size="sm" onClick={() => setOpen(true)}>

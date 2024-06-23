@@ -3,7 +3,7 @@ import * as z from "zod"
 import { Button } from "@/components/ui/button"
 import { Heading } from "@/components/ui/heading"
 import { Separator } from "@/components/ui/separator"
-import { banner } from "@prisma/client"
+import { banner, category } from "@prisma/client"
 import { Trash } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -15,21 +15,22 @@ import axios from "axios"
 import { useParams, useRouter } from "next/navigation"
 import { AlertModal } from "@/components/modals/alert-modal"
 import { useOrigin } from "@/hooks/use-origin"
-import ImageUpload from "@/components/ui/image-upload"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
-interface BannerFormProps {
-    initialData: banner | null
+interface CategoryFormProps {
+    initialData: category | null
+    banners: banner[]
 }
 
 const formSchema = z.object({
-    label: z.string().min(3),
-    imageUrl: z.string().min(1)
+    name: z.string().min(3),
+    bannerId: z.string().min(1)
 })
 
 type SettingFormValues = z.infer<typeof formSchema>
 
-export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
+export const CategoryForm: React.FC<CategoryFormProps> = ({ initialData, banners }) => {
     const params = useParams()
     const router = useRouter()
     const origin = useOrigin()
@@ -37,18 +38,18 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
     const [open, setOpen] = useState(false)
     const [loading, setLoading] = useState(false)
 
-    const title = initialData ? 'Edit Banner' : 'Buat Banner'
-    const description = initialData ? 'Edit Banner Toko' : 'Buat Banner Toko'
-    const toastMessage = initialData ? 'Banner Berhasil di Edit' : 'Banner Berhasil Dibuat'
-    const action = initialData ? 'Simpan Banner' : 'Buat Banner'
+    const title = initialData ? 'Edit Category' : 'Buat Category'
+    const description = initialData ? 'Edit Category Toko' : 'Buat Category Toko'
+    const toastMessage = initialData ? 'Category Berhasil di Edit' : 'Category Berhasil Dibuat'
+    const action = initialData ? 'Simpan Category' : 'Buat Category'
     const descriptionOfDelete = 'Apakah Anda Yakin Ingin Menghapus Data Ini !!!'
 
 
     const form = useForm({
         resolver: zodResolver(formSchema),
         defaultValues: initialData || {
-            label: '',
-            imageUrl: ''
+            name: '',
+            bannerId: ''
         }
     })
 
@@ -56,12 +57,12 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
         try {
             setLoading(true)
             if (initialData) {
-                await axios.patch(`/api/${params.storeId}/banners/${params.bannerId}`, data)
+                await axios.patch(`/api/${params.storeId}/categories/${params.categoryId}`, data)
             } else {
-                await axios.post(`/api/${params.storeId}/banners`, data)
+                await axios.post(`/api/${params.storeId}/categories`, data)
             }
             router.refresh()
-            router.push(`/${params.storeId}/banners`)
+            router.push(`/${params.storeId}/categories`)
             toast.success(toastMessage)
         } catch (error) {
             toast.error('Cek Kembali Form Anda')
@@ -73,10 +74,10 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
     const onDelete = async () => {
         try {
             setLoading(true)
-            await axios.delete(`/api/stores/${params.storeId}/banners/${params.bannerId}`)
+            await axios.delete(`/api/stores/${params.storeId}/categories/${params.categoryId}`)
             router.refresh()
-            router.push(`/${params.storeId}/banners`)
-            toast.success('Banner Berhasil Dihapus')
+            router.push(`/${params.storeId}/categories`)
+            toast.success('Category Berhasil Dihapus')
         } catch (error) {
             toast.error('Cek Kembali Form Anda')
             console.log(error);
@@ -102,24 +103,38 @@ export const BannerForm: React.FC<BannerFormProps> = ({ initialData }) => {
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8 w-full">
                     <div className="grid grid-cols-3 gap-8">
-                        <FormField control={form.control} name="label" render={({ field }) => (
+                        <FormField control={form.control} name="name" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Label</FormLabel>
+                                <FormLabel>Nama Kategori</FormLabel>
                                 <FormControl>
-                                    <Input placeholder="Label Banner" disabled={loading} {...field} />
+                                    <Input placeholder="Nama Kategori" disabled={loading} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
-                        <FormField control={form.control} name="imageUrl" render={({ field }) => (
+                        <FormField control={form.control} name="bannerId" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Image</FormLabel>
+                                <FormLabel>Banner</FormLabel>
                                 <FormControl>
-                                    <ImageUpload disabled={loading} onRemove={() => field.onChange("")} onChange={(url) => field.onChange(url)} value={field.value ? [field.value] : []} />
+                                    <Select disabled={loading} onValueChange={field.onChange} value={field.value} defaultValue={field.value} >
+                                        <FormControl>
+                                            <SelectTrigger>
+                                                <SelectValue defaultValue={field.value} placeholder="Pilih Banner" />
+                                            </SelectTrigger>
+                                        </FormControl>
+                                        <SelectContent>
+                                            {banners.map((banner) => (
+                                                <SelectItem key={banner.id} value={banner.id}>
+                                                    {banner.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
+
                     </div>
                     <Button disabled={loading} type="submit">{action}</Button>
                 </form>
